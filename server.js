@@ -13,11 +13,12 @@ app.use(cors());
 app.use(express.json());
 
 //install the Mongo library
-const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/animals"
+const mongoUrl = process.env.MONGO_URL || "mongodb+srv://Paprika:Hellotomorrow.2021@cluster0.6gvgrxz.mongodb.net/?retryWrites=true&w=majority"
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }) //always the same set up
 mongoose.Promise = Promise //always the same set up
 
 const Animal = mongoose.model('Animal', {
+  id: Number,
   name: String,
   age: Number,
   isFurry: Boolean
@@ -25,9 +26,9 @@ const Animal = mongoose.model('Animal', {
 
 
 Animal.deleteMany().then(() => {
-new Animal ({ name: 'Alfons', age: 2, isFurry: true }).save()
-new Animal ({ name: 'Lucy', age: 5, isFurry: true }).save()
-new Animal ({ name: 'Goldy the goldsfish', age: 1, isFurry: false }).save()
+new Animal ({ id: 1, name: 'Alfons', age: 2, isFurry: true }).save()
+new Animal ({ id: 2, name: 'Lucy', age: 5, isFurry: true }).save()
+new Animal ({ id: 3, name: 'Goldy the goldsfish', age: 1, isFurry: false }).save()
 })
 
 // Start defining your routes here
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
   })
 });
 
+//Damien checking the database is in good state
 app.use((req, res, next) => {
   if (mongoose.connection.readyState === 1) {
     next()
@@ -53,8 +55,8 @@ Animal.findOne({name: req.params.name}).then(animal => {
   } else {
     res.status(404).json({error: 'Not found'})
   }
-} catch (err) {
-  res.status(400).json({error: 'invalid id'})
+} catch (err) {  //does not work as I do not use asynch
+  res.status(400).json({error: 'invalid name'})
 }
 })
 });
